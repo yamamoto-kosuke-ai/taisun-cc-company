@@ -5,7 +5,7 @@
 # 使い方:
 #   1. 新規プロジェクトディレクトリで実行
 #   2. taisun_agentのシンボリックリンクを作成
-#   3. 統合プラグインをインストール
+#   3. 統合スキルをtaisun_agentに注入
 # ============================================
 
 set -e
@@ -19,7 +19,6 @@ NC='\033[0m'
 
 # 設定
 TAISUN_HOME="${TAISUN_HOME:-$HOME/taisun_agent}"
-PLUGIN_REPO="taisun-cc-company"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
@@ -107,27 +106,27 @@ else
     echo -e "${GREEN}  ✅ .mcp.json → $TAISUN_HOME/.mcp.json${NC}"
 fi
 
-# ステップ4: 統合プラグインのインストール
+# ステップ4: 統合スキルをtaisun_agentに注入
 echo ""
-echo -e "${YELLOW}[4/5] 統合プラグインのセットアップ...${NC}"
+echo -e "${YELLOW}[4/5] CC-Company統合スキルの注入...${NC}"
 
-# プラグインディレクトリをコピー（シンボリックリンクではなくコピー）
-PLUGIN_DIR=".claude-plugin"
-if [ ! -d "$PLUGIN_DIR" ]; then
-    cp -r "$SCRIPT_DIR/.claude-plugin" "$PLUGIN_DIR" 2>/dev/null || true
-    echo -e "${GREEN}  ✅ プラグインメタデータを配置しました${NC}"
+# スキルファイルをtaisun_agentの.claude/skills/に直接コピー
+SKILL_DEST="$TAISUN_HOME/.claude/skills/company"
+
+if [ -d "$SKILL_DEST" ]; then
+    # 既存のスキルを更新
+    cp -f "$SCRIPT_DIR/plugins/company/skills/company/SKILL.md" "$SKILL_DEST/SKILL.md"
+    cp -rf "$SCRIPT_DIR/plugins/company/skills/company/references" "$SKILL_DEST/"
+    echo -e "${GREEN}  ✅ CC-Company統合スキルを更新しました${NC}"
 else
-    echo -e "${GREEN}  ✅ プラグインメタデータは既に存在します${NC}"
+    # 新規作成
+    mkdir -p "$SKILL_DEST/references"
+    cp "$SCRIPT_DIR/plugins/company/skills/company/SKILL.md" "$SKILL_DEST/SKILL.md"
+    cp -r "$SCRIPT_DIR/plugins/company/skills/company/references/"* "$SKILL_DEST/references/"
+    echo -e "${GREEN}  ✅ CC-Company統合スキルを注入しました${NC}"
 fi
 
-PLUGINS_DIR="plugins/company"
-if [ ! -d "$PLUGINS_DIR" ]; then
-    mkdir -p "plugins"
-    cp -r "$SCRIPT_DIR/plugins/company" "plugins/company"
-    echo -e "${GREEN}  ✅ 統合プラグインを配置しました${NC}"
-else
-    echo -e "${GREEN}  ✅ 統合プラグインは既に存在します${NC}"
-fi
+echo -e "${BLUE}  配置先: $SKILL_DEST/${NC}"
 
 # ステップ5: 検証
 echo ""
@@ -150,18 +149,33 @@ else
     ERRORS=$((ERRORS + 1))
 fi
 
-# プラグインファイルの確認
-if [ -f "plugins/company/skills/company/SKILL.md" ]; then
-    echo -e "${GREEN}  ✅ 統合SKILL.md 存在確認${NC}"
+# スキルファイルの確認（taisun_agent内）
+if [ -f "$TAISUN_HOME/.claude/skills/company/SKILL.md" ]; then
+    echo -e "${GREEN}  ✅ 統合SKILL.md 存在確認（$TAISUN_HOME/.claude/skills/company/）${NC}"
 else
     echo -e "${RED}  ❌ 統合SKILL.md が見つかりません${NC}"
     ERRORS=$((ERRORS + 1))
 fi
 
-if [ -f "plugins/company/skills/company/references/departments.md" ]; then
+if [ -f "$TAISUN_HOME/.claude/skills/company/references/departments.md" ]; then
     echo -e "${GREEN}  ✅ 統合departments.md 存在確認${NC}"
 else
     echo -e "${RED}  ❌ 統合departments.md が見つかりません${NC}"
+    ERRORS=$((ERRORS + 1))
+fi
+
+if [ -f "$TAISUN_HOME/.claude/skills/company/references/claude-md-template.md" ]; then
+    echo -e "${GREEN}  ✅ 統合claude-md-template.md 存在確認${NC}"
+else
+    echo -e "${RED}  ❌ 統合claude-md-template.md が見つかりません${NC}"
+    ERRORS=$((ERRORS + 1))
+fi
+
+# シンボリックリンク経由でのアクセス確認
+if [ -f ".claude/skills/company/SKILL.md" ]; then
+    echo -e "${GREEN}  ✅ シンボリックリンク経由でスキルにアクセス可能${NC}"
+else
+    echo -e "${RED}  ❌ シンボリックリンク経由でスキルにアクセスできません${NC}"
     ERRORS=$((ERRORS + 1))
 fi
 
@@ -177,7 +191,7 @@ if [ $ERRORS -eq 0 ]; then
     echo ""
     echo "  搭載機能:"
     echo "  - 96 AIエージェント"
-    echo "  - 101+ スキル"
+    echo "  - 101+ スキル（+ /company スキル）"
     echo "  - 18 MCPサーバー"
     echo "  - 14層防御フック"
     echo "  - Memory++システム"

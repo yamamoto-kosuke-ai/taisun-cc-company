@@ -33,7 +33,21 @@ CC-Companyの「秘書に話しかけるだけ」のシンプルなUIと、Taisu
 
 ### 初回セットアップ（PCに1回だけ実行）
 
-以下をターミナルにそのままコピペしてください。すべて自動で完了します。
+以下を**1行ずつ**ターミナルにコピペして実行してください。
+
+**Windows（PowerShell）の場合:**
+
+```powershell
+cd ~
+git clone https://github.com/taiyousan15/taisun_agent.git
+cd taisun_agent
+npm install
+npm run build
+cd ~
+git clone https://github.com/yamamoto-kosuke-ai/taisun-cc-company.git
+```
+
+**Mac / Linux（ターミナル）の場合:**
 
 ```bash
 cd ~ && git clone https://github.com/taiyousan15/taisun_agent.git && cd taisun_agent && npm install && npm run build && cd ~ && git clone https://github.com/yamamoto-kosuke-ai/taisun-cc-company.git
@@ -53,12 +67,22 @@ cd ~ && git clone https://github.com/taiyousan15/taisun_agent.git && cd taisun_a
 
 新しいプロジェクトを始めるとき、以下をコピペしてください。
 
+**Windows（PowerShell）の場合:**
+
+```powershell
+cd ~/my-project
+git init
+bash ~/taisun-cc-company/setup.sh
+```
+
+**Mac / Linux（ターミナル）の場合:**
+
 ```bash
 cd ~/my-project && git init && bash ~/taisun-cc-company/setup.sh
 ```
 
 > `~/my-project` の部分だけ、実際のプロジェクトパスに置き換えてください。
-> 既にgit initされているプロジェクトの場合は `cd ~/my-project && bash ~/taisun-cc-company/setup.sh` だけでOKです。
+> 既にgit initされているプロジェクトの場合は `cd` と `bash ~/taisun-cc-company/setup.sh` だけでOKです。
 
 セットアップスクリプトが自動で行うこと:
 
@@ -135,12 +159,15 @@ claude
 
 ### まとめ: 全手順の早見表
 
-| 手順 | コマンド | 実行タイミング |
-|------|---------|--------------|
-| PC初回セットアップ | `cd ~ && git clone https://github.com/taiyousan15/taisun_agent.git && cd taisun_agent && npm install && npm run build && cd ~ && git clone https://github.com/yamamoto-kosuke-ai/taisun-cc-company.git` | PCに1回だけ |
-| プロジェクト導入 | `cd ~/my-project && git init && bash ~/taisun-cc-company/setup.sh` | プロジェクトごと |
-| 仮想会社構築 | Claude Code内で `/company` | プロジェクトごと（初回のみ） |
-| 日常利用 | Claude Code内でそのまま話しかける | 毎回 |
+| # | 手順 | どこで実行？ | 実行タイミング |
+|---|------|------------|--------------|
+| 1 | PC初回セットアップ（上記コマンド群） | ターミナル（PowerShell / bash） | PCに1回だけ |
+| 2 | プロジェクト導入（`bash ~/taisun-cc-company/setup.sh`） | ターミナル（PowerShell / bash） | プロジェクトごと |
+| 3 | 仮想会社構築（`/company`） | Claude Code内 | プロジェクトごと（初回のみ） |
+| 4 | 日常利用（そのまま話しかける） | Claude Code内 | 毎回 |
+
+> **手順1・2はターミナル（PowerShellまたはbash）で実行します。**
+> **手順3・4はClaude Code内で実行します。**
 
 ---
 

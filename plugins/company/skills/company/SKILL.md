@@ -1,11 +1,7 @@
 ---
 name: company
-description: >
-  Taisun Agent統合版 仮想会社組織スキル。
-  秘書が常駐の窓口として何でも相談に乗り、
-  必要に応じてCEOが判断して各部署に指示を振り分ける。
-  各部署にはTaisunの96エージェント・101スキル・18 MCPサーバーが搭載されている。
-trigger: /company
+description: Taisun統合版 仮想会社組織 - 秘書に話しかけるだけで96エージェント・101スキルを自動活用
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash, WebSearch, WebFetch, Agent, Skill
 ---
 
 # 仮想カンパニー（Taisun統合版）

@@ -1,0 +1,10 @@
+{
+  "name": "company",
+  "source": "./plugins/company",
+  "version": "2.0.0",
+  "author": "taisun×cc-company",
+  "license": "MIT",
+  "category": "productivity",
+  "description": "Taisun Agent統合版: 仮想会社組織 + 96エージェント + 101スキル + 18 MCPサーバー",
+  "tags": ["company", "organization", "secretary", "productivity", "management", "taisun", "agents", "mcp"]
+}

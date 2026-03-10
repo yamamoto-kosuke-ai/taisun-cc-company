@@ -1,0 +1,16 @@
+# Taisun symlinks (these point to user's local taisun_agent)
+.claude
+.mcp.json
+
+# Generated company directory
+.company/
+
+# Backups
+*.backup
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/

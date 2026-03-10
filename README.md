@@ -35,22 +35,28 @@ CC-Companyの「秘書に話しかけるだけ」のシンプルなUIと、Taisu
 
 以下を**1行ずつ**ターミナルにコピペして実行してください。
 
-**Windows（PowerShell）の場合:**
+**重要: 1行ずつコピペしてEnterを押してください。まとめてコピペするとエラーになります。**
 
-```powershell
-cd ~
-git clone https://github.com/taiyousan15/taisun_agent.git
-cd taisun_agent
-npm install
-npm run build
-cd ~
-git clone https://github.com/yamamoto-kosuke-ai/taisun-cc-company.git
 ```
-
-**Mac / Linux（ターミナル）の場合:**
-
-```bash
-cd ~ && git clone https://github.com/taiyousan15/taisun_agent.git && cd taisun_agent && npm install && npm run build && cd ~ && git clone https://github.com/yamamoto-kosuke-ai/taisun-cc-company.git
+cd ~
+```
+```
+git clone https://github.com/taiyousan15/taisun_agent.git
+```
+```
+cd taisun_agent
+```
+```
+npm install
+```
+```
+npm run build
+```
+```
+cd ~
+```
+```
+git clone https://github.com/yamamoto-kosuke-ai/taisun-cc-company.git
 ```
 
 実行結果:
@@ -67,18 +73,16 @@ cd ~ && git clone https://github.com/taiyousan15/taisun_agent.git && cd taisun_a
 
 新しいプロジェクトを始めるとき、以下をコピペしてください。
 
-**Windows（PowerShell）の場合:**
+**1行ずつコピペしてEnterを押してください。**
 
-```powershell
-cd ~/my-project
-git init
-bash ~/taisun-cc-company/setup.sh
 ```
-
-**Mac / Linux（ターミナル）の場合:**
-
-```bash
-cd ~/my-project && git init && bash ~/taisun-cc-company/setup.sh
+cd ~/my-project
+```
+```
+git init
+```
+```
+bash ~/taisun-cc-company/setup.sh
 ```
 
 > `~/my-project` の部分だけ、実際のプロジェクトパスに置き換えてください。

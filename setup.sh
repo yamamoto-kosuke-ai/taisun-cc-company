@@ -108,29 +108,103 @@ fi
 
 # ステップ4: 統合スキルをtaisun_agentに注入
 echo ""
-echo -e "${YELLOW}[4/5] CC-Company統合スキルの注入...${NC}"
+echo -e "${YELLOW}[4/6] CC-Company統合スキルの注入...${NC}"
 
-# スキルファイルをtaisun_agentの.claude/skills/に直接コピー
+# /company スキルをtaisun_agentの.claude/skills/に直接コピー
 SKILL_DEST="$TAISUN_HOME/.claude/skills/company"
 
 if [ -d "$SKILL_DEST" ]; then
-    # 既存のスキルを更新
     cp -f "$SCRIPT_DIR/plugins/company/skills/company/SKILL.md" "$SKILL_DEST/SKILL.md"
     cp -rf "$SCRIPT_DIR/plugins/company/skills/company/references" "$SKILL_DEST/"
-    echo -e "${GREEN}  ✅ CC-Company統合スキルを更新しました${NC}"
+    echo -e "${GREEN}  ✅ /company スキルを更新しました${NC}"
 else
-    # 新規作成
     mkdir -p "$SKILL_DEST/references"
     cp "$SCRIPT_DIR/plugins/company/skills/company/SKILL.md" "$SKILL_DEST/SKILL.md"
     cp -r "$SCRIPT_DIR/plugins/company/skills/company/references/"* "$SKILL_DEST/references/"
-    echo -e "${GREEN}  ✅ CC-Company統合スキルを注入しました${NC}"
+    echo -e "${GREEN}  ✅ /company スキルを注入しました${NC}"
 fi
 
 echo -e "${BLUE}  配置先: $SKILL_DEST/${NC}"
 
-# ステップ5: 検証
+# /partner スキルをtaisun_agentの.claude/skills/に直接コピー
 echo ""
-echo -e "${YELLOW}[5/5] 検証...${NC}"
+echo -e "${YELLOW}[5/6] Partner統合スキルの注入...${NC}"
+
+PARTNER_DEST="$TAISUN_HOME/.claude/skills/partner"
+
+if [ -d "$PARTNER_DEST" ]; then
+    cp -f "$SCRIPT_DIR/plugins/partner/skills/partner/SKILL.md" "$PARTNER_DEST/SKILL.md"
+    cp -rf "$SCRIPT_DIR/plugins/partner/skills/partner/references" "$PARTNER_DEST/"
+    echo -e "${GREEN}  ✅ /partner スキルを更新しました${NC}"
+else
+    mkdir -p "$PARTNER_DEST/references"
+    cp "$SCRIPT_DIR/plugins/partner/skills/partner/SKILL.md" "$PARTNER_DEST/SKILL.md"
+    cp -r "$SCRIPT_DIR/plugins/partner/skills/partner/references/"* "$PARTNER_DEST/references/"
+    echo -e "${GREEN}  ✅ /partner スキルを注入しました${NC}"
+fi
+
+echo -e "${BLUE}  配置先: $PARTNER_DEST/${NC}"
+
+# ステップ5b: Playwright Skillの注入
+echo ""
+echo -e "${YELLOW}[5b/6] Playwright Skill の注入...${NC}"
+
+PW_DEST="$TAISUN_HOME/.claude/skills/playwright-skill"
+
+if [ -d "$PW_DEST" ]; then
+    cp -f "$SCRIPT_DIR/plugins/playwright/skills/playwright-skill/SKILL.md" "$PW_DEST/SKILL.md"
+    cp -f "$SCRIPT_DIR/plugins/playwright/skills/playwright-skill/run.js" "$PW_DEST/run.js"
+    cp -f "$SCRIPT_DIR/plugins/playwright/skills/playwright-skill/package.json" "$PW_DEST/package.json"
+    cp -f "$SCRIPT_DIR/plugins/playwright/skills/playwright-skill/API_REFERENCE.md" "$PW_DEST/API_REFERENCE.md"
+    cp -rf "$SCRIPT_DIR/plugins/playwright/skills/playwright-skill/lib" "$PW_DEST/"
+    echo -e "${GREEN}  ✅ Playwright Skill を更新しました${NC}"
+else
+    mkdir -p "$PW_DEST/lib"
+    cp "$SCRIPT_DIR/plugins/playwright/skills/playwright-skill/SKILL.md" "$PW_DEST/SKILL.md"
+    cp "$SCRIPT_DIR/plugins/playwright/skills/playwright-skill/run.js" "$PW_DEST/run.js"
+    cp "$SCRIPT_DIR/plugins/playwright/skills/playwright-skill/package.json" "$PW_DEST/package.json"
+    cp "$SCRIPT_DIR/plugins/playwright/skills/playwright-skill/API_REFERENCE.md" "$PW_DEST/API_REFERENCE.md"
+    cp -r "$SCRIPT_DIR/plugins/playwright/skills/playwright-skill/lib/"* "$PW_DEST/lib/"
+    echo -e "${GREEN}  ✅ Playwright Skill を注入しました${NC}"
+fi
+
+echo -e "${BLUE}  配置先: $PW_DEST/${NC}"
+
+# Playwright 依存パッケージの自動インストール
+if command -v npm &> /dev/null; then
+    if [ ! -d "$PW_DEST/node_modules" ]; then
+        echo -e "${YELLOW}  📦 Playwright 依存パッケージをインストール中...${NC}"
+        (cd "$PW_DEST" && npm install --silent 2>/dev/null && npx playwright install chromium 2>/dev/null)
+        if [ $? -eq 0 ]; then
+            echo -e "${GREEN}  ✅ Playwright インストール完了${NC}"
+        else
+            echo -e "${YELLOW}  ⚠️  自動インストールに失敗しました。手動で実行してください:${NC}"
+            echo -e "${YELLOW}     cd $PW_DEST && npm run setup${NC}"
+        fi
+    else
+        echo -e "${GREEN}  ✅ Playwright は既にインストール済み${NC}"
+    fi
+else
+    echo -e "${YELLOW}  ⚠️  npm が見つかりません。Playwright の手動インストールが必要です${NC}"
+fi
+
+# ステップ5c: n8n MCP のユーザーレベル設定案内
+echo ""
+echo -e "${YELLOW}[5c/6] n8n MCP サーバー設定確認...${NC}"
+
+# ユーザーレベルの ~/.claude.json を確認
+if [ -f "$HOME/.claude.json" ] && grep -q "n8n-mcp" "$HOME/.claude.json" 2>/dev/null; then
+    echo -e "${GREEN}  ✅ n8n MCP は既にユーザーレベルで設定済み${NC}"
+else
+    echo -e "${YELLOW}  ℹ️  n8n MCP を追加するには以下を実行してください:${NC}"
+    echo -e "${BLUE}     claude mcp add -s user n8n-mcp -- npx n8n-mcp${NC}"
+    echo -e "${YELLOW}  ℹ️  n8nインスタンスに接続する場合:${NC}"
+    echo -e "${BLUE}     claude mcp add -s user n8n-mcp -e N8N_API_URL=http://localhost:5678/api/v1 -e N8N_API_KEY=your-key -- npx n8n-mcp${NC}"
+fi
+
+# ステップ6: 検証
+echo ""
+echo -e "${YELLOW}[6/6] 検証...${NC}"
 
 ERRORS=0
 
@@ -171,11 +245,48 @@ else
     ERRORS=$((ERRORS + 1))
 fi
 
+# /partner スキルファイルの確認（taisun_agent内）
+if [ -f "$TAISUN_HOME/.claude/skills/partner/SKILL.md" ]; then
+    echo -e "${GREEN}  ✅ /partner SKILL.md 存在確認（$TAISUN_HOME/.claude/skills/partner/）${NC}"
+else
+    echo -e "${RED}  ❌ /partner SKILL.md が見つかりません${NC}"
+    ERRORS=$((ERRORS + 1))
+fi
+
+if [ -f "$TAISUN_HOME/.claude/skills/partner/references/interview-guide.md" ]; then
+    echo -e "${GREEN}  ✅ /partner interview-guide.md 存在確認${NC}"
+else
+    echo -e "${RED}  ❌ /partner interview-guide.md が見つかりません${NC}"
+    ERRORS=$((ERRORS + 1))
+fi
+
 # シンボリックリンク経由でのアクセス確認
 if [ -f ".claude/skills/company/SKILL.md" ]; then
-    echo -e "${GREEN}  ✅ シンボリックリンク経由でスキルにアクセス可能${NC}"
+    echo -e "${GREEN}  ✅ シンボリックリンク経由で /company にアクセス可能${NC}"
 else
-    echo -e "${RED}  ❌ シンボリックリンク経由でスキルにアクセスできません${NC}"
+    echo -e "${RED}  ❌ シンボリックリンク経由で /company にアクセスできません${NC}"
+    ERRORS=$((ERRORS + 1))
+fi
+
+if [ -f ".claude/skills/partner/SKILL.md" ]; then
+    echo -e "${GREEN}  ✅ シンボリックリンク経由で /partner にアクセス可能${NC}"
+else
+    echo -e "${RED}  ❌ シンボリックリンク経由で /partner にアクセスできません${NC}"
+    ERRORS=$((ERRORS + 1))
+fi
+
+# Playwright Skill の確認
+if [ -f "$TAISUN_HOME/.claude/skills/playwright-skill/SKILL.md" ]; then
+    echo -e "${GREEN}  ✅ Playwright Skill 存在確認（$TAISUN_HOME/.claude/skills/playwright-skill/）${NC}"
+else
+    echo -e "${RED}  ❌ Playwright Skill が見つかりません${NC}"
+    ERRORS=$((ERRORS + 1))
+fi
+
+if [ -f ".claude/skills/playwright-skill/SKILL.md" ]; then
+    echo -e "${GREEN}  ✅ シンボリックリンク経由で Playwright Skill にアクセス可能${NC}"
+else
+    echo -e "${RED}  ❌ シンボリックリンク経由で Playwright Skill にアクセスできません${NC}"
     ERRORS=$((ERRORS + 1))
 fi
 
@@ -188,13 +299,17 @@ if [ $ERRORS -eq 0 ]; then
     echo "  次のステップ:"
     echo "  1. Claude Code を起動: claude"
     echo "  2. 仮想会社を構築: /company"
+    echo "  3. 業務パートナーを設定: /partner"
     echo ""
     echo "  搭載機能:"
     echo "  - 96 AIエージェント"
-    echo "  - 101+ スキル（+ /company スキル）"
-    echo "  - 18 MCPサーバー"
+    echo "  - 101+ スキル（+ /company, /partner, Playwright Skill）"
+    echo "  - 18+ MCPサーバー（+ n8n MCP）"
     echo "  - 14層防御フック"
     echo "  - Memory++システム"
+    echo "  - Playwright ブラウザ自動化"
+    echo "  - Google Workspace連携（要: サービスアカウントJSONキー）"
+    echo "  - Chatwork連携（要: .chatwork-config.json）"
 else
     echo -e "${RED}  ❌ セットアップにエラーがあります（${ERRORS}件）${NC}"
     echo "  上記のエラーを確認してください"

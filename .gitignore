@@ -8,6 +8,11 @@
 # Backups
 *.backup
 
+# Auth credentials (NEVER commit these)
+.chatwork-config.json
+*-service-account*.json
+*-credentials*.json
+
 # OS files
 .DS_Store
 Thumbs.db

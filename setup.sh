@@ -211,9 +211,28 @@ else
     echo -e "${YELLOW}  ⚠️  .company が未構築です。/company 実行後に setup.sh を再実行してください${NC}"
 fi
 
-# ステップ5d: Briefing Skill の注入
+# ステップ5d: Mission Skill の注入
 echo ""
-echo -e "${YELLOW}[5d/6] Briefing Skill の注入...${NC}"
+echo -e "${YELLOW}[5d/6] Mission Skill の注入...${NC}"
+
+MS_DEST="$TAISUN_HOME/.claude/skills/mission"
+
+if [ -d "$MS_DEST" ]; then
+    cp -f "$SCRIPT_DIR/plugins/mission/skills/mission/SKILL.md" "$MS_DEST/SKILL.md"
+    cp -rf "$SCRIPT_DIR/plugins/mission/skills/mission/references" "$MS_DEST/"
+    echo -e "${GREEN}  ✅ Mission Skill を更新しました${NC}"
+else
+    mkdir -p "$MS_DEST/references"
+    cp "$SCRIPT_DIR/plugins/mission/skills/mission/SKILL.md" "$MS_DEST/SKILL.md"
+    cp -r "$SCRIPT_DIR/plugins/mission/skills/mission/references/"* "$MS_DEST/references/"
+    echo -e "${GREEN}  ✅ Mission Skill を注入しました${NC}"
+fi
+
+echo -e "${BLUE}  配置先: $MS_DEST/${NC}"
+
+# ステップ5e: Briefing Skill の注入
+echo ""
+echo -e "${YELLOW}[5e/6] Briefing Skill の注入...${NC}"
 
 BR_DEST="$TAISUN_HOME/.claude/skills/briefing"
 
@@ -228,9 +247,9 @@ fi
 
 echo -e "${BLUE}  配置先: $BR_DEST/${NC}"
 
-# ステップ5e: n8n MCP のユーザーレベル設定案内
+# ステップ5f: n8n MCP のユーザーレベル設定案内
 echo ""
-echo -e "${YELLOW}[5e/6] n8n MCP サーバー設定確認...${NC}"
+echo -e "${YELLOW}[5f/6] n8n MCP サーバー設定確認...${NC}"
 
 # ユーザーレベルの ~/.claude.json を確認
 if [ -f "$HOME/.claude.json" ] && grep -q "n8n-mcp" "$HOME/.claude.json" 2>/dev/null; then
@@ -315,6 +334,21 @@ else
     ERRORS=$((ERRORS + 1))
 fi
 
+# Mission Skill の確認
+if [ -f "$TAISUN_HOME/.claude/skills/mission/SKILL.md" ]; then
+    echo -e "${GREEN}  ✅ Mission Skill 存在確認（$TAISUN_HOME/.claude/skills/mission/）${NC}"
+else
+    echo -e "${RED}  ❌ Mission Skill が見つかりません${NC}"
+    ERRORS=$((ERRORS + 1))
+fi
+
+if [ -f ".claude/skills/mission/SKILL.md" ]; then
+    echo -e "${GREEN}  ✅ シンボリックリンク経由で Mission Skill にアクセス可能${NC}"
+else
+    echo -e "${RED}  ❌ シンボリックリンク経由で Mission Skill にアクセスできません${NC}"
+    ERRORS=$((ERRORS + 1))
+fi
+
 # Briefing Skill の確認
 if [ -f "$TAISUN_HOME/.claude/skills/briefing/SKILL.md" ]; then
     echo -e "${GREEN}  ✅ Briefing Skill 存在確認（$TAISUN_HOME/.claude/skills/briefing/）${NC}"
@@ -358,7 +392,7 @@ if [ $ERRORS -eq 0 ]; then
     echo ""
     echo "  搭載機能:"
     echo "  - 96 AIエージェント"
-    echo "  - 101+ スキル（+ /company, /partner, Playwright, /briefing）"
+    echo "  - 101+ スキル（+ /company, /partner, Playwright, /briefing, /mission）"
     echo "  - 18+ MCPサーバー（+ n8n MCP）"
     echo "  - 14層防御フック"
     echo "  - Memory++システム"

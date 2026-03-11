@@ -188,9 +188,49 @@ else
     echo -e "${YELLOW}  ⚠️  npm が見つかりません。Playwright の手動インストールが必要です${NC}"
 fi
 
-# ステップ5c: n8n MCP のユーザーレベル設定案内
+# ステップ5c: プロンプトブースター + ブリーフィングを秘書に注入
 echo ""
-echo -e "${YELLOW}[5c/6] n8n MCP サーバー設定確認...${NC}"
+echo -e "${YELLOW}[5c/6] プロンプトブースター & ブリーフィング を秘書に注入...${NC}"
+
+SEC_CLAUDE=".company/secretary/CLAUDE.md"
+PATCH_FILE="$SCRIPT_DIR/plugins/prompt-booster/secretary-patch.md"
+
+if [ -f "$SEC_CLAUDE" ] && [ -f "$PATCH_FILE" ]; then
+    # 既に注入済みかチェック
+    if grep -q "プロンプトブースター" "$SEC_CLAUDE" 2>/dev/null; then
+        # 古いパッチを削除して再注入（最新版に更新）
+        sed -i '/## プロンプトブースター/,/^## フォルダ構成/{ /^## フォルダ構成/!d }' "$SEC_CLAUDE"
+        sed -i '/## フォルダ構成/e cat '"\"$PATCH_FILE\"" "$SEC_CLAUDE"
+        echo -e "${GREEN}  ✅ プロンプトブースター & ブリーフィングを更新しました${NC}"
+    else
+        # フォルダ構成の前に挿入
+        sed -i '/## フォルダ構成/e cat '"\"$PATCH_FILE\"" "$SEC_CLAUDE"
+        echo -e "${GREEN}  ✅ プロンプトブースター & ブリーフィングを注入しました${NC}"
+    fi
+else
+    echo -e "${YELLOW}  ⚠️  .company が未構築です。/company 実行後に setup.sh を再実行してください${NC}"
+fi
+
+# ステップ5d: Briefing Skill の注入
+echo ""
+echo -e "${YELLOW}[5d/6] Briefing Skill の注入...${NC}"
+
+BR_DEST="$TAISUN_HOME/.claude/skills/briefing"
+
+if [ -d "$BR_DEST" ]; then
+    cp -f "$SCRIPT_DIR/plugins/briefing/skills/briefing/SKILL.md" "$BR_DEST/SKILL.md"
+    echo -e "${GREEN}  ✅ Briefing Skill を更新しました${NC}"
+else
+    mkdir -p "$BR_DEST"
+    cp "$SCRIPT_DIR/plugins/briefing/skills/briefing/SKILL.md" "$BR_DEST/SKILL.md"
+    echo -e "${GREEN}  ✅ Briefing Skill を注入しました${NC}"
+fi
+
+echo -e "${BLUE}  配置先: $BR_DEST/${NC}"
+
+# ステップ5e: n8n MCP のユーザーレベル設定案内
+echo ""
+echo -e "${YELLOW}[5e/6] n8n MCP サーバー設定確認...${NC}"
 
 # ユーザーレベルの ~/.claude.json を確認
 if [ -f "$HOME/.claude.json" ] && grep -q "n8n-mcp" "$HOME/.claude.json" 2>/dev/null; then
@@ -275,6 +315,21 @@ else
     ERRORS=$((ERRORS + 1))
 fi
 
+# Briefing Skill の確認
+if [ -f "$TAISUN_HOME/.claude/skills/briefing/SKILL.md" ]; then
+    echo -e "${GREEN}  ✅ Briefing Skill 存在確認（$TAISUN_HOME/.claude/skills/briefing/）${NC}"
+else
+    echo -e "${RED}  ❌ Briefing Skill が見つかりません${NC}"
+    ERRORS=$((ERRORS + 1))
+fi
+
+if [ -f ".claude/skills/briefing/SKILL.md" ]; then
+    echo -e "${GREEN}  ✅ シンボリックリンク経由で Briefing Skill にアクセス可能${NC}"
+else
+    echo -e "${RED}  ❌ シンボリックリンク経由で Briefing Skill にアクセスできません${NC}"
+    ERRORS=$((ERRORS + 1))
+fi
+
 # Playwright Skill の確認
 if [ -f "$TAISUN_HOME/.claude/skills/playwright-skill/SKILL.md" ]; then
     echo -e "${GREEN}  ✅ Playwright Skill 存在確認（$TAISUN_HOME/.claude/skills/playwright-skill/）${NC}"
@@ -303,11 +358,13 @@ if [ $ERRORS -eq 0 ]; then
     echo ""
     echo "  搭載機能:"
     echo "  - 96 AIエージェント"
-    echo "  - 101+ スキル（+ /company, /partner, Playwright Skill）"
+    echo "  - 101+ スキル（+ /company, /partner, Playwright, /briefing）"
     echo "  - 18+ MCPサーバー（+ n8n MCP）"
     echo "  - 14層防御フック"
     echo "  - Memory++システム"
     echo "  - Playwright ブラウザ自動化"
+    echo "  - モーニングブリーフィング（/briefing）"
+    echo "  - プロンプトブースター（曖昧指示の自動具体化）"
     echo "  - Google Workspace連携（要: サービスアカウントJSONキー）"
     echo "  - Chatwork連携（要: .chatwork-config.json）"
 else

@@ -211,9 +211,37 @@ else
     echo -e "${YELLOW}  ⚠️  .company が未構築です。/company 実行後に setup.sh を再実行してください${NC}"
 fi
 
-# ステップ5d: Mission Skill の注入
+# ステップ5d: Interactive Video Platform の注入
 echo ""
-echo -e "${YELLOW}[5d/6] Mission Skill の注入...${NC}"
+echo -e "${YELLOW}[5d/6] Interactive Video Platform の注入...${NC}"
+
+IV_DEST="$TAISUN_HOME/.claude/skills/interactive-video-platform"
+
+if [ -d "$IV_DEST" ]; then
+    cp -f "$SCRIPT_DIR/plugins/interactive-video/skills/interactive-video-platform/SKILL.md" "$IV_DEST/SKILL.md"
+    cp -rf "$SCRIPT_DIR/plugins/interactive-video/skills/interactive-video-platform/scripts" "$IV_DEST/"
+    echo -e "${GREEN}  ✅ Interactive Video Platform を更新しました${NC}"
+else
+    mkdir -p "$IV_DEST/scripts"
+    cp "$SCRIPT_DIR/plugins/interactive-video/skills/interactive-video-platform/SKILL.md" "$IV_DEST/SKILL.md"
+    cp -r "$SCRIPT_DIR/plugins/interactive-video/skills/interactive-video-platform/scripts/"* "$IV_DEST/scripts/"
+    echo -e "${GREEN}  ✅ Interactive Video Platform を注入しました${NC}"
+fi
+
+echo -e "${BLUE}  配置先: $IV_DEST/${NC}"
+
+# Python依存パッケージの確認
+if command -v python3 &> /dev/null || command -v python &> /dev/null; then
+    echo -e "${GREEN}  ✅ Python 検出済み${NC}"
+    echo -e "${YELLOW}  ℹ️  Fish Audio APIキーを設定してください:${NC}"
+    echo -e "${BLUE}     export FISH_AUDIO_API_KEY=\"your-api-key\"${NC}"
+else
+    echo -e "${YELLOW}  ⚠️  Python が見つかりません。Interactive Video Platform にはPythonが必要です${NC}"
+fi
+
+# ステップ5e: Mission Skill の注入
+echo ""
+echo -e "${YELLOW}[5e/6] Mission Skill の注入...${NC}"
 
 MS_DEST="$TAISUN_HOME/.claude/skills/mission"
 
@@ -232,7 +260,7 @@ echo -e "${BLUE}  配置先: $MS_DEST/${NC}"
 
 # ステップ5e: Briefing Skill の注入
 echo ""
-echo -e "${YELLOW}[5e/6] Briefing Skill の注入...${NC}"
+echo -e "${YELLOW}[5f/6] Briefing Skill の注入...${NC}"
 
 BR_DEST="$TAISUN_HOME/.claude/skills/briefing"
 
@@ -249,7 +277,7 @@ echo -e "${BLUE}  配置先: $BR_DEST/${NC}"
 
 # ステップ5f: n8n MCP のユーザーレベル設定案内
 echo ""
-echo -e "${YELLOW}[5f/6] n8n MCP サーバー設定確認...${NC}"
+echo -e "${YELLOW}[5g/6] n8n MCP サーバー設定確認...${NC}"
 
 # ユーザーレベルの ~/.claude.json を確認
 if [ -f "$HOME/.claude.json" ] && grep -q "n8n-mcp" "$HOME/.claude.json" 2>/dev/null; then
@@ -334,6 +362,21 @@ else
     ERRORS=$((ERRORS + 1))
 fi
 
+# Interactive Video Platform の確認
+if [ -f "$TAISUN_HOME/.claude/skills/interactive-video-platform/SKILL.md" ]; then
+    echo -e "${GREEN}  ✅ Interactive Video Platform 存在確認（$TAISUN_HOME/.claude/skills/interactive-video-platform/）${NC}"
+else
+    echo -e "${RED}  ❌ Interactive Video Platform が見つかりません${NC}"
+    ERRORS=$((ERRORS + 1))
+fi
+
+if [ -f ".claude/skills/interactive-video-platform/SKILL.md" ]; then
+    echo -e "${GREEN}  ✅ シンボリックリンク経由で Interactive Video Platform にアクセス可能${NC}"
+else
+    echo -e "${RED}  ❌ シンボリックリンク経由で Interactive Video Platform にアクセスできません${NC}"
+    ERRORS=$((ERRORS + 1))
+fi
+
 # Mission Skill の確認
 if [ -f "$TAISUN_HOME/.claude/skills/mission/SKILL.md" ]; then
     echo -e "${GREEN}  ✅ Mission Skill 存在確認（$TAISUN_HOME/.claude/skills/mission/）${NC}"
@@ -392,11 +435,12 @@ if [ $ERRORS -eq 0 ]; then
     echo ""
     echo "  搭載機能:"
     echo "  - 96 AIエージェント"
-    echo "  - 101+ スキル（+ /company, /partner, Playwright, /briefing, /mission）"
+    echo "  - 101+ スキル（+ /company, /partner, Playwright, /briefing, /mission, Interactive Video）"
     echo "  - 18+ MCPサーバー（+ n8n MCP）"
     echo "  - 14層防御フック"
     echo "  - Memory++システム"
     echo "  - Playwright ブラウザ自動化"
+    echo "  - Interactive Video Platform（Fish Audio TTS + 分岐VSL）"
     echo "  - モーニングブリーフィング（/briefing）"
     echo "  - プロンプトブースター（曖昧指示の自動具体化）"
     echo "  - Google Workspace連携（要: サービスアカウントJSONキー）"

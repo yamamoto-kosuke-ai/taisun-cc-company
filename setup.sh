@@ -322,9 +322,48 @@ ECC_QG_DIR="$TAISUN_HOME/.claude/hooks/data"
 mkdir -p "$ECC_QG_DIR"
 echo -e "${GREEN}  ✅ データ: quality-gate${NC}"
 
-# ステップ5h: n8n MCP のユーザーレベル設定案内
+# ステップ5h: Anthropic公式プラグイン注入
 echo ""
-echo -e "${YELLOW}[5h/6] n8n MCP サーバー設定確認...${NC}"
+echo -e "${YELLOW}[5h/6] Anthropic公式プラグイン注入...${NC}"
+
+ANTHROPIC_PACK_DIR="$SCRIPT_DIR/plugins/anthropic-official"
+
+# /frontend-design スキル
+FD_DEST="$TAISUN_HOME/.claude/skills/frontend-design"
+mkdir -p "$FD_DEST"
+cp -f "$ANTHROPIC_PACK_DIR/skills/frontend-design/SKILL.md" "$FD_DEST/SKILL.md"
+echo -e "${GREEN}  ✅ /frontend-design スキル（高品質フロントエンドUI生成）${NC}"
+
+# /code-review コマンド
+CR_DEST="$TAISUN_HOME/.claude/commands"
+mkdir -p "$CR_DEST"
+cp -f "$ANTHROPIC_PACK_DIR/commands/code-review.md" "$CR_DEST/code-review.md"
+echo -e "${GREEN}  ✅ /code-review コマンド（Anthropic公式PRレビュー）${NC}"
+
+# security-guidance hook
+cp -f "$ANTHROPIC_PACK_DIR/hooks/security_reminder_hook.py" "$HOOKS_DEST/security_reminder_hook.py"
+echo -e "${GREEN}  ✅ security_reminder_hook.py（セキュリティ警告Hook）${NC}"
+
+# security-guidance hook の settings.json 自動登録
+ANTHROPIC_REGISTER="$ANTHROPIC_PACK_DIR/register-hooks.js"
+if [ -f "$ANTHROPIC_REGISTER" ] && [ -f "$SETTINGS_FILE" ]; then
+    RESULT=$(node "$ANTHROPIC_REGISTER" "$SETTINGS_FILE" 2>&1)
+    echo "$RESULT" | while IFS= read -r line; do
+        case "$line" in
+            ADDED:*)  echo -e "${GREEN}  ✅ ${line#ADDED: }${NC}" ;;
+            SKIP:*)   echo -e "${GREEN}  ✅ ${line#SKIP: }${NC}" ;;
+            SAVED:*)  echo -e "${GREEN}  ✅ ${line#SAVED: }${NC}" ;;
+            NO*)      echo -e "${GREEN}  ✅ security hook登録済み（変更なし）${NC}" ;;
+            *)        echo -e "${YELLOW}  $line${NC}" ;;
+        esac
+    done
+fi
+
+echo -e "${BLUE}  出典: github.com/anthropics/claude-code/plugins/${NC}"
+
+# ステップ5i: n8n MCP のユーザーレベル設定案内
+echo ""
+echo -e "${YELLOW}[5i/6] n8n MCP サーバー設定確認...${NC}"
 
 # ユーザーレベルの ~/.claude.json を確認
 if [ -f "$HOME/.claude.json" ] && grep -q "n8n-mcp" "$HOME/.claude.json" 2>/dev/null; then
@@ -483,6 +522,28 @@ else
     ERRORS=$((ERRORS + 1))
 fi
 
+# Anthropic公式プラグインの確認
+if [ -f "$TAISUN_HOME/.claude/skills/frontend-design/SKILL.md" ]; then
+    echo -e "${GREEN}  ✅ Anthropic: /frontend-design スキル${NC}"
+else
+    echo -e "${RED}  ❌ Anthropic: /frontend-design が見つかりません${NC}"
+    ERRORS=$((ERRORS + 1))
+fi
+
+if [ -f "$TAISUN_HOME/.claude/commands/code-review.md" ]; then
+    echo -e "${GREEN}  ✅ Anthropic: /code-review コマンド${NC}"
+else
+    echo -e "${RED}  ❌ Anthropic: /code-review が見つかりません${NC}"
+    ERRORS=$((ERRORS + 1))
+fi
+
+if [ -f "$TAISUN_HOME/.claude/hooks/security_reminder_hook.py" ]; then
+    echo -e "${GREEN}  ✅ Anthropic: security-guidance hook${NC}"
+else
+    echo -e "${RED}  ❌ Anthropic: security-guidance hook が見つかりません${NC}"
+    ERRORS=$((ERRORS + 1))
+fi
+
 # Playwright Skill の確認
 if [ -f "$TAISUN_HOME/.claude/skills/playwright-skill/SKILL.md" ]; then
     echo -e "${GREEN}  ✅ Playwright Skill 存在確認（$TAISUN_HOME/.claude/skills/playwright-skill/）${NC}"
@@ -522,6 +583,9 @@ if [ $ERRORS -eq 0 ]; then
     echo "  - ECC統合: Session Memory Persistence（セッション状態の自動保存・復元）"
     echo "  - ECC統合: Continuous Learning（パターン自動学習・スキル昇華）"
     echo "  - ECC統合: Quality Gate（コード品質の自動チェック）"
+    echo "  - Anthropic公式: /frontend-design（高品質フロントエンドUI生成）"
+    echo "  - Anthropic公式: /code-review（PRレビュー）"
+    echo "  - Anthropic公式: security-guidance（セキュリティ警告Hook）"
     echo "  - Google Workspace連携（要: サービスアカウントJSONキー）"
     echo "  - Chatwork連携（要: .chatwork-config.json）"
 else

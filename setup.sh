@@ -275,24 +275,52 @@ fi
 
 echo -e "${BLUE}  配置先: $BR_DEST/${NC}"
 
-# ステップ5g: ECC統合 (everything-claude-code) データディレクトリ作成
+# ステップ5g: ECC統合 (everything-claude-code) Hookファイル注入 + データディレクトリ作成
 echo ""
-echo -e "${YELLOW}[5g/6] ECC統合データディレクトリ作成...${NC}"
+echo -e "${YELLOW}[5g/6] ECC統合 (everything-claude-code) セットアップ...${NC}"
 
-# Session Memory Persistence
+# Hook ファイルの注入
+ECC_PACK_DIR="$SCRIPT_DIR/plugins/ecc-integration"
+HOOKS_DEST="$TAISUN_HOME/.claude/hooks"
+
+cp -f "$ECC_PACK_DIR/hooks/session-memory-persistence.js" "$HOOKS_DEST/session-memory-persistence.js"
+echo -e "${GREEN}  ✅ session-memory-persistence.js (SessionStart + Stop)${NC}"
+
+cp -f "$ECC_PACK_DIR/hooks/continuous-learning.js" "$HOOKS_DEST/continuous-learning.js"
+echo -e "${GREEN}  ✅ continuous-learning.js (PostToolUse)${NC}"
+
+cp -f "$ECC_PACK_DIR/hooks/quality-gate.js" "$HOOKS_DEST/quality-gate.js"
+echo -e "${GREEN}  ✅ quality-gate.js (PostToolUse)${NC}"
+
+# settings.json への Hook 自動登録
+ECC_REGISTER="$ECC_PACK_DIR/register-hooks.js"
+SETTINGS_FILE="$TAISUN_HOME/.claude/settings.json"
+if [ -f "$ECC_REGISTER" ] && [ -f "$SETTINGS_FILE" ]; then
+    RESULT=$(node "$ECC_REGISTER" "$SETTINGS_FILE" 2>&1)
+    echo "$RESULT" | while IFS= read -r line; do
+        case "$line" in
+            ADDED:*)  echo -e "${GREEN}  ✅ ${line#ADDED: }${NC}" ;;
+            SKIP:*)   echo -e "${GREEN}  ✅ ${line#SKIP: }${NC}" ;;
+            BACKUP:*) echo -e "${BLUE}  📋 バックアップ: ${line#BACKUP: }${NC}" ;;
+            SAVED:*)  echo -e "${GREEN}  ✅ ${line#SAVED: }${NC}" ;;
+            NO*)      echo -e "${GREEN}  ✅ 全hook登録済み（変更なし）${NC}" ;;
+            *)        echo -e "${YELLOW}  $line${NC}" ;;
+        esac
+    done
+fi
+
+# データディレクトリ作成
 ECC_SESSION_DIR="$TAISUN_HOME/.claude/hooks/data/session-memory/archive"
 mkdir -p "$ECC_SESSION_DIR"
-echo -e "${GREEN}  ✅ Session Memory Persistence: $TAISUN_HOME/.claude/hooks/data/session-memory/${NC}"
+echo -e "${GREEN}  ✅ データ: session-memory/${NC}"
 
-# Continuous Learning
 ECC_LEARNING_DIR="$TAISUN_HOME/.claude/hooks/data/learning"
 mkdir -p "$ECC_LEARNING_DIR"
-echo -e "${GREEN}  ✅ Continuous Learning: $ECC_LEARNING_DIR/${NC}"
+echo -e "${GREEN}  ✅ データ: learning/${NC}"
 
-# Quality Gate (log directory)
 ECC_QG_DIR="$TAISUN_HOME/.claude/hooks/data"
 mkdir -p "$ECC_QG_DIR"
-echo -e "${GREEN}  ✅ Quality Gate: $ECC_QG_DIR/${NC}"
+echo -e "${GREEN}  ✅ データ: quality-gate${NC}"
 
 # ステップ5h: n8n MCP のユーザーレベル設定案内
 echo ""

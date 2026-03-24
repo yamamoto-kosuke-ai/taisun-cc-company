@@ -1,0 +1,110 @@
+{
+  "_meta": {
+    "description": "人事労務 料率マスタ - 社会保険料率・税率の一元管理",
+    "lastUpdated": "2026-03-24",
+    "lastVerifiedBy": "WebSearch自動リサーチ",
+    "nextReviewDate": "2026-04-01",
+    "sources": [
+      "https://www.kyoukaikenpo.or.jp/",
+      "https://www.nta.go.jp/publication/pamph/gensen/zeigakuhyo2026/01.htm",
+      "https://www.mhlw.go.jp/content/001672589.pdf"
+    ]
+  },
+  "socialInsurance": {
+    "healthInsurance": {
+      "rate": 9.9,
+      "unit": "percent",
+      "split": "employer_employee_half",
+      "note": "都道府県別に異なる。9.9%は全国平均(協会けんぽ)",
+      "effectiveFrom": "2026-03-01",
+      "source": "協会けんぽ 令和8年度保険料率"
+    },
+    "nursingCareInsurance": {
+      "rate": 1.62,
+      "unit": "percent",
+      "split": "employer_employee_half",
+      "targetAge": "40-64",
+      "effectiveFrom": "2026-03-01",
+      "source": "協会けんぽ 令和8年度介護保険料率"
+    },
+    "welfarePension": {
+      "rate": 18.3,
+      "unit": "percent",
+      "split": "employer_employee_half",
+      "note": "平成29年9月以降固定",
+      "effectiveFrom": "2017-09-01",
+      "source": "日本年金機構"
+    },
+    "childCareSupport": {
+      "rate": 0.23,
+      "unit": "percent",
+      "split": "employer_only",
+      "note": "令和8年4月新設。子ども・子育て支援金",
+      "effectiveFrom": "2026-04-01",
+      "source": "厚生労働省 令和8年度"
+    },
+    "childRearing": {
+      "rate": 0.36,
+      "unit": "percent",
+      "split": "employer_only",
+      "note": "子ども・子育て拠出金",
+      "effectiveFrom": "2024-04-01",
+      "source": "内閣府"
+    }
+  },
+  "employmentInsurance": {
+    "general": {
+      "employeeRate": 0.55,
+      "employerRate": 0.9,
+      "totalRate": 1.45,
+      "unit": "percent",
+      "effectiveFrom": "2026-04-01",
+      "note": "令和8年度。前年度比▲0.1%",
+      "source": "厚生労働省 令和8年度雇用保険料率"
+    },
+    "construction": {
+      "employeeRate": 0.55,
+      "employerRate": 1.1,
+      "totalRate": 1.65,
+      "unit": "percent",
+      "effectiveFrom": "2026-04-01"
+    }
+  },
+  "incomeTax": {
+    "basicDeduction": {
+      "amount": 580000,
+      "unit": "yen",
+      "note": "令和8年分から48万→58万に引上げ",
+      "condition": "合計所得金額2,350万円以下",
+      "effectiveFrom": "2026-01-01",
+      "source": "国税庁 令和8年分源泉徴収税額表"
+    },
+    "salaryDeductionMinimum": {
+      "amount": 650000,
+      "unit": "yen",
+      "note": "給与所得控除の最低保障額。55万→65万に引上げ",
+      "effectiveFrom": "2026-01-01"
+    },
+    "specialRelativeDeduction": {
+      "maxAmount": 630000,
+      "unit": "yen",
+      "note": "特定親族特別控除（新設）。大学生相当の子のバイト収入対応",
+      "effectiveFrom": "2026-01-01"
+    },
+    "withholdingTableVersion": "令和8年分",
+    "withholdingTableSource": "https://www.nta.go.jp/publication/pamph/gensen/zeigakuhyo2026/01.htm"
+  },
+  "residentTax": {
+    "note": "住民税は市区町村からの決定通知額をそのまま控除。計算不要",
+    "collectionMethod": "special_collection",
+    "annualNotificationMonth": 5
+  },
+  "minimumWage": {
+    "national": {
+      "amount": 1055,
+      "unit": "yen_per_hour",
+      "note": "令和7年10月改定の全国加重平均。令和8年度は未定",
+      "effectiveFrom": "2025-10-01"
+    }
+  }
+}

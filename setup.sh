@@ -275,9 +275,28 @@ fi
 
 echo -e "${BLUE}  配置先: $BR_DEST/${NC}"
 
-# ステップ5f: n8n MCP のユーザーレベル設定案内
+# ステップ5g: ECC統合 (everything-claude-code) データディレクトリ作成
 echo ""
-echo -e "${YELLOW}[5g/6] n8n MCP サーバー設定確認...${NC}"
+echo -e "${YELLOW}[5g/6] ECC統合データディレクトリ作成...${NC}"
+
+# Session Memory Persistence
+ECC_SESSION_DIR="$TAISUN_HOME/.claude/hooks/data/session-memory/archive"
+mkdir -p "$ECC_SESSION_DIR"
+echo -e "${GREEN}  ✅ Session Memory Persistence: $TAISUN_HOME/.claude/hooks/data/session-memory/${NC}"
+
+# Continuous Learning
+ECC_LEARNING_DIR="$TAISUN_HOME/.claude/hooks/data/learning"
+mkdir -p "$ECC_LEARNING_DIR"
+echo -e "${GREEN}  ✅ Continuous Learning: $ECC_LEARNING_DIR/${NC}"
+
+# Quality Gate (log directory)
+ECC_QG_DIR="$TAISUN_HOME/.claude/hooks/data"
+mkdir -p "$ECC_QG_DIR"
+echo -e "${GREEN}  ✅ Quality Gate: $ECC_QG_DIR/${NC}"
+
+# ステップ5h: n8n MCP のユーザーレベル設定案内
+echo ""
+echo -e "${YELLOW}[5h/6] n8n MCP サーバー設定確認...${NC}"
 
 # ユーザーレベルの ~/.claude.json を確認
 if [ -f "$HOME/.claude.json" ] && grep -q "n8n-mcp" "$HOME/.claude.json" 2>/dev/null; then
@@ -407,6 +426,35 @@ else
     ERRORS=$((ERRORS + 1))
 fi
 
+# ECC統合 Hook の確認
+if [ -f "$TAISUN_HOME/.claude/hooks/session-memory-persistence.js" ]; then
+    echo -e "${GREEN}  ✅ ECC: Session Memory Persistence hook 存在確認${NC}"
+else
+    echo -e "${RED}  ❌ ECC: Session Memory Persistence hook が見つかりません${NC}"
+    ERRORS=$((ERRORS + 1))
+fi
+
+if [ -f "$TAISUN_HOME/.claude/hooks/continuous-learning.js" ]; then
+    echo -e "${GREEN}  ✅ ECC: Continuous Learning hook 存在確認${NC}"
+else
+    echo -e "${RED}  ❌ ECC: Continuous Learning hook が見つかりません${NC}"
+    ERRORS=$((ERRORS + 1))
+fi
+
+if [ -f "$TAISUN_HOME/.claude/hooks/quality-gate.js" ]; then
+    echo -e "${GREEN}  ✅ ECC: Quality Gate hook 存在確認${NC}"
+else
+    echo -e "${RED}  ❌ ECC: Quality Gate hook が見つかりません${NC}"
+    ERRORS=$((ERRORS + 1))
+fi
+
+if [ -d "$TAISUN_HOME/.claude/hooks/data/session-memory" ] && [ -d "$TAISUN_HOME/.claude/hooks/data/learning" ]; then
+    echo -e "${GREEN}  ✅ ECC: データディレクトリ正常${NC}"
+else
+    echo -e "${RED}  ❌ ECC: データディレクトリが不足しています${NC}"
+    ERRORS=$((ERRORS + 1))
+fi
+
 # Playwright Skill の確認
 if [ -f "$TAISUN_HOME/.claude/skills/playwright-skill/SKILL.md" ]; then
     echo -e "${GREEN}  ✅ Playwright Skill 存在確認（$TAISUN_HOME/.claude/skills/playwright-skill/）${NC}"
@@ -443,6 +491,9 @@ if [ $ERRORS -eq 0 ]; then
     echo "  - Interactive Video Platform（Fish Audio TTS + 分岐VSL）"
     echo "  - モーニングブリーフィング（/briefing）"
     echo "  - プロンプトブースター（曖昧指示の自動具体化）"
+    echo "  - ECC統合: Session Memory Persistence（セッション状態の自動保存・復元）"
+    echo "  - ECC統合: Continuous Learning（パターン自動学習・スキル昇華）"
+    echo "  - ECC統合: Quality Gate（コード品質の自動チェック）"
     echo "  - Google Workspace連携（要: サービスアカウントJSONキー）"
     echo "  - Chatwork連携（要: .chatwork-config.json）"
 else

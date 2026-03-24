@@ -361,9 +361,43 @@ fi
 
 echo -e "${BLUE}  出典: github.com/anthropics/claude-code/plugins/${NC}"
 
-# ステップ5i: n8n MCP のユーザーレベル設定案内
+
+# ステップ5i: Skill Generator 注入
 echo ""
-echo -e "${YELLOW}[5i/6] n8n MCP サーバー設定確認...${NC}"
+echo -e "${YELLOW}[5i/6] Skill Generator 注入...${NC}"
+
+SG_PACK_DIR="$SCRIPT_DIR/plugins/skill-generator"
+
+# /skill-forge スキル
+SF_DEST="$TAISUN_HOME/.claude/skills/skill-forge"
+mkdir -p "$SF_DEST/references"
+cp -f "$SG_PACK_DIR/skills/skill-forge/SKILL.md" "$SF_DEST/SKILL.md"
+cp -rf "$SG_PACK_DIR/skills/skill-forge/references/"* "$SF_DEST/references/"
+echo -e "${GREEN}  ✅ /skill-forge（スキル自動生成パイプライン）${NC}"
+
+# /skill-validator スキル
+SV_DEST="$TAISUN_HOME/.claude/skills/skill-validator"
+mkdir -p "$SV_DEST"
+cp -f "$SG_PACK_DIR/skills/skill-validator/SKILL.md" "$SV_DEST/SKILL.md"
+echo -e "${GREEN}  ✅ /skill-validator（5層品質バリデーション）${NC}"
+
+# /skill-analyzer スキル
+SA_DEST="$TAISUN_HOME/.claude/skills/skill-analyzer"
+mkdir -p "$SA_DEST"
+cp -f "$SG_PACK_DIR/skills/skill-analyzer/SKILL.md" "$SA_DEST/SKILL.md"
+echo -e "${GREEN}  ✅ /skill-analyzer（既存スキル改善提案）${NC}"
+
+# テンプレート
+SG_TMPL_DEST="$TAISUN_HOME/.claude/skills/skill-forge/templates"
+mkdir -p "$SG_TMPL_DEST"
+cp -rf "$SG_PACK_DIR/templates/"* "$SG_TMPL_DEST/"
+echo -e "${GREEN}  ✅ テンプレート5種（basic/research/generator/automation/analysis）${NC}"
+
+echo -e "${BLUE}  出典: github.com/yamamoto-kosuke-ai/skill-generator${NC}"
+
+# ステップ5j: n8n MCP のユーザーレベル設定案内
+echo ""
+echo -e "${YELLOW}[5j/6] n8n MCP サーバー設定確認...${NC}"
 
 # ユーザーレベルの ~/.claude.json を確認
 if [ -f "$HOME/.claude.json" ] && grep -q "n8n-mcp" "$HOME/.claude.json" 2>/dev/null; then
@@ -544,6 +578,17 @@ else
     ERRORS=$((ERRORS + 1))
 fi
 
+
+# Skill Generator の確認
+for sg_skill in skill-forge skill-validator skill-analyzer; do
+    if [ -f "$TAISUN_HOME/.claude/skills/$sg_skill/SKILL.md" ]; then
+        echo -e "${GREEN}  ✅ Skill Generator: /$sg_skill${NC}"
+    else
+        echo -e "${RED}  ❌ Skill Generator: /$sg_skill が見つかりません${NC}"
+        ERRORS=$((ERRORS + 1))
+    fi
+done
+
 # Playwright Skill の確認
 if [ -f "$TAISUN_HOME/.claude/skills/playwright-skill/SKILL.md" ]; then
     echo -e "${GREEN}  ✅ Playwright Skill 存在確認（$TAISUN_HOME/.claude/skills/playwright-skill/）${NC}"
@@ -586,6 +631,7 @@ if [ $ERRORS -eq 0 ]; then
     echo "  - Anthropic公式: /frontend-design（高品質フロントエンドUI生成）"
     echo "  - Anthropic公式: /code-review（PRレビュー）"
     echo "  - Anthropic公式: security-guidance（セキュリティ警告Hook）"
+    echo "  - Skill Generator: /skill-forge, /skill-validator, /skill-analyzer"
     echo "  - Google Workspace連携（要: サービスアカウントJSONキー）"
     echo "  - Chatwork連携（要: .chatwork-config.json）"
 else

@@ -16,6 +16,7 @@ CC-Companyの「秘書に話しかけるだけ」のシンプルなUIと、Taisu
 | 防御フック    | 14層  | 破壊的操作ブロック、入力サニタイズ、ワークフロー逸脱警告など                      |
 | ECC統合     | 3機能  | Session Memory Persistence、Continuous Learning、Quality Gate  |
 | Anthropic公式 | 3プラグイン | frontend-design、code-review、security-guidance |
+| Skill Generator | 3スキル | /skill-forge（自動生成）、/skill-validator（品質検証）、/skill-analyzer（改善提案） |
 | 仮想会社部署   | 11   | 秘書室・CEO・PM・リサーチ・マーケ・開発・経理・営業・クリエイティブ・人事・レビュー        |
 | 業務パートナー  | 1    | /partner - ヒアリング→業務理解→Chatwork/Google Workspace直接出力 |
 

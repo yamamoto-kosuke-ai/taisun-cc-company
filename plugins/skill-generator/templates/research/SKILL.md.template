@@ -1,0 +1,122 @@
+---
+name: {{SKILL_NAME}}
+description: |
+  {{WHAT_DESCRIPTION}}
+  Use when user says "{{TRIGGER_1}}", "{{TRIGGER_2}}", or "{{TRIGGER_3}}".
+  Do NOT use for: {{NOT_CONDITION}} (use {{ALT_SKILL}} instead).
+argument-hint: "{{ARGUMENT_HINT}}"
+allowed-tools: Read, Write, Bash, Grep, Glob, WebSearch, WebFetch, Task
+model: {{MODEL}}
+metadata:
+  author: {{AUTHOR}}
+  version: "1.0.0"
+---
+
+# {{SKILL_TITLE}}
+
+{{BRIEF_DESCRIPTION}}
+
+## Input
+
+```
+$ARGUMENTS = "{{USAGE_EXAMPLE}}"
+```
+
+## Research Pipeline
+
+### Step 1: Query Preparation
+
+Parse input and generate search queries:
+
+```
+Primary:   "{{PRIMARY_QUERY}}"
+Secondary: "{{SECONDARY_QUERY}}"
+Tertiary:  "{{TERTIARY_QUERY}}"
+```
+
+### Step 2: Parallel Search (3 Agents)
+
+Launch 3 Task agents in parallel (run_in_background: true):
+
+**Agent A: {{AGENT_A_FOCUS}}**
+```
+WebSearch: "{{SEARCH_A1}}"
+WebSearch: "{{SEARCH_A2}}"
+```
+
+**Agent B: {{AGENT_B_FOCUS}}**
+```
+WebSearch: "{{SEARCH_B1}}"
+WebSearch: "{{SEARCH_B2}}"
+```
+
+**Agent C: {{AGENT_C_FOCUS}}**
+```
+WebSearch: "{{SEARCH_C1}}"
+WebSearch: "{{SEARCH_C2}}"
+```
+
+### Step 3: Result Integration
+
+Merge and deduplicate results:
+
+```yaml
+research_results:
+  query: "$ARGUMENTS"
+  total_sources: {N}
+  key_findings:
+    - "{finding_1}"
+    - "{finding_2}"
+  patterns:
+    - "{pattern_1}"
+  recommendations:
+    - "{recommendation_1}"
+```
+
+### Step 4: Quality Scoring
+
+| Metric | Threshold | Score |
+|--------|-----------|-------|
+| Sources found | >= 5 | /25 |
+| Key findings | >= 3 | /25 |
+| Patterns | >= 2 | /25 |
+| Actionability | High | /25 |
+
+Below 70: Run supplementary search (1 round max).
+
+## Output Format
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {{SKILL_TITLE}} - Complete
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Query:     $ARGUMENTS
+  Sources:   {N}
+  Findings:  {N}
+  Score:     {score}/100
+
+  Key Findings:
+  1. {finding}
+  2. {finding}
+  3. {finding}
+
+  Recommendations:
+  - {recommendation}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+## Error Handling
+
+| Error | Solution |
+|-------|----------|
+| WebSearch rate limit | Wait and retry (1x), then proceed with partial results |
+| No results found | Broaden query terms, try English + Japanese |
+| Agent timeout | Continue with partial results from completed agents |
+
+## Troubleshooting
+
+### Few results returned
+- Generalize the search terms
+- Try both English and Japanese queries
+- Search for broader category instead of specific topic

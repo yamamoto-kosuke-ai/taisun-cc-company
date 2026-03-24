@@ -1,0 +1,55 @@
+---
+name: {{SKILL_NAME}}
+description: |
+  {{WHAT_DESCRIPTION}}
+  Use when user says "{{TRIGGER_1}}", "{{TRIGGER_2}}", or "{{TRIGGER_3}}".
+  Do NOT use for: {{NOT_CONDITION}} (use {{ALT_SKILL}} instead).
+argument-hint: "{{ARGUMENT_HINT}}"
+allowed-tools: {{ALLOWED_TOOLS}}
+metadata:
+  author: {{AUTHOR}}
+  version: "1.0.0"
+---
+
+# {{SKILL_TITLE}}
+
+{{BRIEF_DESCRIPTION}}
+
+## Usage
+
+```
+$ARGUMENTS = "{{USAGE_EXAMPLE}}"
+```
+
+## Steps
+
+### Step 1: {{STEP_1_TITLE}}
+
+{{STEP_1_DESCRIPTION}}
+
+### Step 2: {{STEP_2_TITLE}}
+
+{{STEP_2_DESCRIPTION}}
+
+### Step 3: {{STEP_3_TITLE}}
+
+{{STEP_3_DESCRIPTION}}
+
+## Output Format
+
+```
+{{OUTPUT_FORMAT}}
+```
+
+## Error Handling
+
+| Error | Solution |
+|-------|----------|
+| {{ERROR_1}} | {{SOLUTION_1}} |
+| {{ERROR_2}} | {{SOLUTION_2}} |
+
+## Troubleshooting
+
+### {{ISSUE_1_TITLE}}
+**Cause**: {{CAUSE_1}}
+**Fix**: {{FIX_1}}

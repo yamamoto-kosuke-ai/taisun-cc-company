@@ -1,0 +1,119 @@
+---
+name: {{SKILL_NAME}}
+description: |
+  {{WHAT_DESCRIPTION}}
+  Use when user says "{{TRIGGER_1}}", "{{TRIGGER_2}}", or "{{TRIGGER_3}}".
+  Do NOT use for: {{NOT_CONDITION}} (use {{ALT_SKILL}} instead).
+argument-hint: "{{ARGUMENT_HINT}}"
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
+model: {{MODEL}}
+metadata:
+  author: {{AUTHOR}}
+  version: "1.0.0"
+---
+
+# {{SKILL_TITLE}}
+
+{{BRIEF_DESCRIPTION}}
+
+## Input
+
+```
+$ARGUMENTS = "{{USAGE_EXAMPLE}}"
+```
+
+## Prerequisites
+
+- {{PREREQUISITE_1}}
+- {{PREREQUISITE_2}}
+
+## Automation Pipeline
+
+### Step 1: Environment Check
+
+```bash
+# Verify prerequisites
+command -v {{REQUIRED_TOOL_1}} >/dev/null 2>&1 || { echo "{{REQUIRED_TOOL_1}} required"; exit 1; }
+command -v {{REQUIRED_TOOL_2}} >/dev/null 2>&1 || { echo "{{REQUIRED_TOOL_2}} required"; exit 1; }
+```
+
+### Step 2: {{STEP_2_TITLE}}
+
+```bash
+{{STEP_2_COMMAND}}
+```
+
+Expected output:
+```
+{{STEP_2_EXPECTED_OUTPUT}}
+```
+
+### Step 3: {{STEP_3_TITLE}}
+
+```bash
+{{STEP_3_COMMAND}}
+```
+
+### Step 4: Verification
+
+```bash
+# Verify the automation completed successfully
+{{VERIFICATION_COMMAND}}
+```
+
+Success criteria:
+- {{SUCCESS_CRITERION_1}}
+- {{SUCCESS_CRITERION_2}}
+
+## Safety Guards
+
+**Before executing destructive operations:**
+1. Confirm with user via AskUserQuestion
+2. Create backup if applicable
+3. Log the operation
+
+**Forbidden operations (without explicit user approval):**
+- `rm -rf /` or equivalent
+- `sudo` commands
+- Modifying system files
+- Force-pushing to remote
+
+## Output Format
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {{SKILL_TITLE}} - Complete
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Status:  SUCCESS
+  Steps:   {completed}/{total}
+  Time:    {duration}
+
+  Results:
+  - {result_1}
+  - {result_2}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+## Error Handling
+
+| Error | Solution |
+|-------|----------|
+| Prerequisite missing | Install instruction + skip |
+| Command failed (exit != 0) | Show stderr + suggest fix |
+| Permission denied | Request elevation or alternative path |
+| Timeout | Show partial results + retry option |
+
+## Rollback
+
+If automation fails mid-way:
+1. Identify last successful step
+2. Revert changes from failed step
+3. Report state to user
+
+## Troubleshooting
+
+### Command not found
+- Verify the tool is installed: `which {{TOOL}}`
+- Check PATH includes the tool's directory
+- Install if missing: `{{INSTALL_COMMAND}}`

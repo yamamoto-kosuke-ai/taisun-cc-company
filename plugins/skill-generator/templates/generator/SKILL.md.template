@@ -1,0 +1,106 @@
+---
+name: {{SKILL_NAME}}
+description: |
+  {{WHAT_DESCRIPTION}}
+  Use when user says "{{TRIGGER_1}}", "{{TRIGGER_2}}", or "{{TRIGGER_3}}".
+  Do NOT use for: {{NOT_CONDITION}} (use {{ALT_SKILL}} instead).
+argument-hint: "{{ARGUMENT_HINT}}"
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
+model: {{MODEL}}
+metadata:
+  author: {{AUTHOR}}
+  version: "1.0.0"
+---
+
+# {{SKILL_TITLE}}
+
+{{BRIEF_DESCRIPTION}}
+
+## Input
+
+```
+$ARGUMENTS = "{{USAGE_EXAMPLE}}"
+```
+
+## Generation Pipeline
+
+### Step 1: Input Analysis
+
+Parse `$ARGUMENTS` and extract:
+
+```yaml
+generation_config:
+  target: "{{TARGET_TYPE}}"
+  format: "{{OUTPUT_FORMAT}}"
+  constraints:
+    - "{{CONSTRAINT_1}}"
+    - "{{CONSTRAINT_2}}"
+```
+
+### Step 2: Template Selection
+
+| Input Type | Template | Features |
+|-----------|----------|----------|
+| {{TYPE_1}} | {{TEMPLATE_1}} | {{FEATURES_1}} |
+| {{TYPE_2}} | {{TEMPLATE_2}} | {{FEATURES_2}} |
+
+### Step 3: Content Generation
+
+Generate content following these rules:
+
+1. **Structure**: {{STRUCTURE_RULE}}
+2. **Naming**: {{NAMING_RULE}}
+3. **Style**: {{STYLE_RULE}}
+4. **Validation**: {{VALIDATION_RULE}}
+
+### Step 4: Quality Check
+
+```
+Validation:
+  [ ] Structure correct
+  [ ] Naming conventions followed
+  [ ] No placeholders remaining
+  [ ] No security issues
+```
+
+### Step 5: Output
+
+Write generated files:
+
+```
+{{OUTPUT_DIRECTORY}}/
+├── {{OUTPUT_FILE_1}}
+├── {{OUTPUT_FILE_2}}
+└── {{OUTPUT_FILE_3}}
+```
+
+## Output Format
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {{SKILL_TITLE}} - Complete
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Generated: {file_count} files
+  Location:  {output_path}
+
+  Files:
+  - {file_1}
+  - {file_2}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+## Error Handling
+
+| Error | Solution |
+|-------|----------|
+| Invalid input format | Show expected format with example |
+| Output path not writable | Suggest alternative path |
+| Template not found | Fall back to basic template |
+
+## Troubleshooting
+
+### Generated output has issues
+- Check input format matches expected pattern
+- Verify constraints are not contradictory
+- Review template for outdated patterns

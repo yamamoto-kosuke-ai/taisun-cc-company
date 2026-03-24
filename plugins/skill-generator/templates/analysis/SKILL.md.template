@@ -1,0 +1,120 @@
+---
+name: {{SKILL_NAME}}
+description: |
+  {{WHAT_DESCRIPTION}}
+  Use when user says "{{TRIGGER_1}}", "{{TRIGGER_2}}", or "{{TRIGGER_3}}".
+  Do NOT use for: {{NOT_CONDITION}} (use {{ALT_SKILL}} instead).
+argument-hint: "{{ARGUMENT_HINT}}"
+allowed-tools: Read, Grep, Glob, Bash
+model: {{MODEL}}
+metadata:
+  author: {{AUTHOR}}
+  version: "1.0.0"
+---
+
+# {{SKILL_TITLE}}
+
+{{BRIEF_DESCRIPTION}}
+
+## Input
+
+```
+$ARGUMENTS = "{{USAGE_EXAMPLE}}"
+```
+
+## Analysis Pipeline
+
+### Step 1: Target Discovery
+
+```bash
+# Find target files
+Glob: "{{TARGET_PATTERN}}"
+```
+
+Expected targets:
+- {{TARGET_TYPE_1}}: {{DESCRIPTION_1}}
+- {{TARGET_TYPE_2}}: {{DESCRIPTION_2}}
+
+### Step 2: Data Collection
+
+For each target file:
+1. Read file content
+2. Extract {{METRIC_1}}
+3. Extract {{METRIC_2}}
+4. Calculate {{METRIC_3}}
+
+### Step 3: Analysis
+
+```yaml
+analysis_results:
+  targets_scanned: {N}
+  metrics:
+    {{METRIC_1}}: {value}
+    {{METRIC_2}}: {value}
+    {{METRIC_3}}: {value}
+  findings:
+    critical: [{finding}]
+    warning: [{finding}]
+    info: [{finding}]
+```
+
+### Step 4: Scoring
+
+| Metric | Weight | Score |
+|--------|--------|-------|
+| {{METRIC_1}} | {{WEIGHT_1}}% | /100 |
+| {{METRIC_2}} | {{WEIGHT_2}}% | /100 |
+| {{METRIC_3}} | {{WEIGHT_3}}% | /100 |
+
+### Step 5: Recommendations
+
+Generate prioritized improvement recommendations:
+
+```
+Priority 1 (Critical): {recommendation}
+Priority 2 (High):     {recommendation}
+Priority 3 (Medium):   {recommendation}
+```
+
+## Output Format
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {{SKILL_TITLE}} - Analysis Report
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Target:    $ARGUMENTS
+  Scanned:   {N} files
+  Score:     {score}/100 ({rating})
+
+  Metrics:
+    {{METRIC_1}}: {value} ({status})
+    {{METRIC_2}}: {value} ({status})
+    {{METRIC_3}}: {value} ({status})
+
+  Findings:
+  [CRITICAL] {finding}
+  [WARNING]  {finding}
+  [INFO]     {finding}
+
+  Recommendations:
+  1. {recommendation}
+  2. {recommendation}
+  3. {recommendation}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+## Error Handling
+
+| Error | Solution |
+|-------|----------|
+| No target files found | Suggest alternative patterns |
+| File too large to analyze | Use offset/limit for partial read |
+| Permission denied | Report and skip file |
+
+## Troubleshooting
+
+### Score seems inaccurate
+- Verify target files are correct type
+- Check analysis rules match the technology
+- Review edge cases in metric calculation

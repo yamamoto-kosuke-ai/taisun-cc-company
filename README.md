@@ -21,16 +21,25 @@ CC-Companyの「秘書に話しかけるだけ」のシンプルなUIと、Taisu
 | 業務パートナー  | 1    | /partner - ヒアリング→業務理解→Chatwork/Google Workspace直接出力 |
 
 
-### 2つのスキル
+
+### 主要スキル
 
 
-| スキル        | 用途          | 特徴                                                     |
-| ---------- | ----------- | ------------------------------------------------------ |
-| `/company` | 仮想会社組織で業務管理 | 秘書→CEO→部署の組織構造。ファイルベースで業務を管理                           |
-| `/partner` | 個人の業務パートナー  | ヒアリングで業務を理解し、Chatwork・Googleスライド・ドキュメント・スプレッドシート等に直接出力 |
+| スキル | 用途 | 特徴 |
+|--------|------|------|
+| `/company` | 仮想会社組織で業務管理 | 秘書→CEO→部署の組織構造。ファイルベースで業務を管理 |
+| `/partner` | 個人の業務パートナー | ヒアリングで業務を理解し、Chatwork・Google Workspace等に直接出力 |
+| `/frontend-design` | 高品質フロントエンドUI | AIっぽい量産型デザインを避け、記憶に残る独自UIを生成 |
+| `/code-review` | PR自動レビュー | 並列エージェントでバグ検出+CLAUDE.md準拠チェック |
+| `/skill-forge` | スキル自動生成 | リサーチ→生成→5層検証→反復改善の6フェーズパイプライン |
+| `/skill-validator` | スキル品質検証 | 100点満点の5層バリデーション（90点以上で合格） |
+| `/skill-analyzer` | 既存スキル改善 | 既存スキルを分析し具体的な改善提案を生成 |
+| `/hr-law-check` | 法改正リサーチ | 最新の社保料率・税制改正をWebSearchで3重クロスチェック（※人事労務パック） |
+| `/hr-rate-update` | 料率マスタ更新 | 社保・税率の一元管理マスタを最新化（※人事労務パック） |
 
 
 `/company` と `/partner` は**併用可能**です。目的に応じてどちらか片方だけでも使えます。
+
 
 ---
 
@@ -112,26 +121,39 @@ bash ~/taisun-cc-company/setup.sh
 セットアップスクリプトが自動で行うこと:
 
 ```
-[1/6] 前提条件チェック
+[1/14] 前提条件チェック
   ✅ taisun_agent の存在確認
   ✅ Git の確認
 
-[2/6] プロジェクト初期化
+[2/14] プロジェクト初期化
   ✅ git リポジトリ確認
 
-[3/6] Taisun Agent シンボリックリンク作成
+[3/14] Taisun Agent シンボリックリンク作成
   ✅ .claude → ~/taisun_agent/.claude
   ✅ .mcp.json → ~/taisun_agent/.mcp.json
 
-[4/6] CC-Company統合スキルの注入
-  ✅ /company スキル配置
+[4/14] CC-Company統合スキルの注入
+  ✅ /company, /partner スキル配置
 
-[5/6] Partner統合スキルの注入
-  ✅ /partner スキル配置
+[5/14] Playwright Skill の注入
+[6/14] プロンプトブースター & ブリーフィング注入
+[7/14] Interactive Video Platform の注入
+[8/14] Mission Skill の注入
+[9/14] Briefing Skill の注入
 
-[6/6] 検証
-  ✅ 全リンク正常
-  ✅ 全ファイル存在確認
+[10/14] ECC統合 (everything-claude-code) セットアップ
+  ✅ Session Memory Persistence, Continuous Learning, Quality Gate
+  ✅ settings.json へ hook 自動登録
+
+[11/14] Anthropic公式プラグイン注入
+  ✅ /frontend-design, /code-review, security-guidance
+
+[12/14] Skill Generator 注入
+  ✅ /skill-forge, /skill-validator, /skill-analyzer
+
+[13/14] n8n MCP サーバー設定確認
+[14/14] 検証
+  ✅ 全リンク・全ファイル存在確認
 ```
 
 ---

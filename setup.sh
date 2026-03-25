@@ -368,7 +368,7 @@ echo -e "${YELLOW}[12/15] Anthropic公式スキル注入...${NC}"
 
 AS_PACK_DIR="$SCRIPT_DIR/plugins/anthropic-skills"
 
-for as_skill in docx xlsx pdf pptx mcp-builder doc-coauthoring; do
+for as_skill in docx xlsx pdf pptx mcp-builder doc-coauthoring skill-creator webapp-testing; do
     AS_DEST="$TAISUN_HOME/.claude/skills/$as_skill"
     if [ -d "$AS_PACK_DIR/skills/$as_skill" ]; then
         mkdir -p "$AS_DEST"
@@ -650,7 +650,7 @@ if [ $ERRORS -eq 0 ]; then
     echo "  - Anthropic公式: /code-review（PRレビュー）"
     echo "  - Anthropic公式: security-guidance（セキュリティ警告Hook）"
     echo "  - Skill Generator: /skill-forge, /skill-validator, /skill-analyzer"
-    echo "  - Anthropic公式スキル: /docx, /xlsx, /pdf, /pptx, /mcp-builder, /doc-coauthoring"
+    echo "  - Anthropic公式スキル: /docx, /xlsx, /pdf, /pptx, /mcp-builder, /doc-coauthoring, /skill-creator, /webapp-testing"
     echo "  - Google Workspace連携（要: サービスアカウントJSONキー）"
     echo "  - Chatwork連携（要: .chatwork-config.json）"
 else

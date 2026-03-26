@@ -128,7 +128,7 @@ echo -e "${BLUE}  配置先: $SKILL_DEST/${NC}"
 
 # /partner スキルをtaisun_agentの.claude/skills/に直接コピー
 echo ""
-echo -e "${YELLOW}[5/6] Partner統合スキルの注入...${NC}"
+echo -e "${YELLOW}[4/16] Partner統合スキルの注入（続き）...${NC}"
 
 PARTNER_DEST="$TAISUN_HOME/.claude/skills/partner"
 
